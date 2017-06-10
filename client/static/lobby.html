@@ -1,0 +1,56 @@
+<div class="page split-view fullscreen page-navbar page-active" data-page="lobby">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="navigate-back" ng-click="disconnect()"></div>
+			<div class="split-view-icon"></div>
+			<div class="navbar-title">Lobby</div>
+		</div>
+	</div>
+	<div class="split-view">
+		<div class="split-controller">
+			<div class="split-view-items">
+				<div class="link active" data-tab="games">
+					<div class="item-media"><i class="icon">&#xE7FC;</i></div>
+					<p class="title">Games</p>
+				</div>
+				<div class="link" ng-click="createGame()">
+					<div class="item-media"><i class="icon">&#xE768;</i></div>
+					<p class="title">Create Game</p>
+				</div>
+				<div class="link" data-tab="settings">
+					<div class="item-media"><i class="icon">&#xE713;</i></div>
+					<p class="title">Settings</p>
+				</div>
+			</div>
+		</div>
+		<div class="split-content">
+			<div class="split-tab tab-active" data-tab="games">
+				<h3 class="no-games-title" ng-if="gameList.length == 0">There are no games</h3>
+				
+				<ul class="grid-view" ng-if="gameList.length > 0">
+					<li ng-repeat="game in $root.gameList" ng-click="joinGame(game.id)">
+						<span class="fake-border"></span>
+						<figure>
+							<p class="h3">{{game.host}}'s Game</p>
+							
+							<p class="h4" ng-switch="game.state" style="margin: 0">
+								<span ng-switch-when="3">Lobby</span>
+								<span ng-switch-default>In Progress</span>
+							</p>
+							<span>{{game.playerCount}} / {{game.options.gameOptions.playerLimit}} Players</span>
+							<span ng-if="!game.options.hasPassword">Passworded</span>
+						</figure>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="split-tab" data-tab="settings">
+				<p class="h3">Background Mode</p>
+				<div class="theme-selector"></div>
+				
+				<p class="h3">Accent Color</p>
+				<div class="accent-selector"></div>
+			</div>
+		</div>
+	</div>
+</div>

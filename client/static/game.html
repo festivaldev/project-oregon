@@ -1,0 +1,83 @@
+<div class="page fullscreen page-navbar page-active" data-page="game">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="navigate-back" ng-click="leaveGame()"></div>
+			<div class="navbar-title">{{ $root.currentGame.host.name }}'s Game</div>
+		</div>
+	</div>
+	
+	<div class="page-content">
+		<div ng-if="$root.currentGame.gameState == 3">
+			<p class="h1">Game Lobby</p>
+			
+			<p class="h3">Game Options</p>
+			<p class="small">Score Limit</p>
+			<input type="text" placeholder="4-69" ng-class="{disabled: $root.currentGame.host.socketId != socket.id || true}">
+			<p class="small">Player Limit</p>
+			<input type="text" placeholder="3-20" ng-class="{disabled: $root.currentGame.host.socketId != socket.id || true}">
+			<p class="small">White Cards</p>
+			<input type="text" placeholder="0-30" ng-class="{disabled: $root.currentGame.host.socketId != socket.id || true}">
+			
+			<div ng-if="socket.id == $root.currentGame.host.socketId">
+				<button ng-if="$root.currentGame.gameState == 3" ng-click="startGame()" ng-disabled="$root.currentGame.connectedUsers.length < 3">Start Game</button>
+			</div>
+			<div ng-if="socket.id != $root.currentGame.host.socketId">
+				<p>Waiting for host...</p>
+			</div>
+		</div>
+		
+		<div class="round-cards" ng-if="$root.currentGame.gameState == 4 || $root.currentGame.gameState == 2">
+			<div class="card black-card" ng-if="$root.currentGame.gameState == 4">
+				<span ng-bind-html="renderHtml($root.currentGame.blackCard.text)"></span>
+			</div>
+			
+			<div class="played-cards" ng-if="$root.currentGame.gameState == 2 && $root.currentGame.blackCards.length == 0">
+				<div class="card-container" ng-repeat="card in $root.currentGame.whiteCards">
+					<div class="card white-card" ng-class="{'accent-background': card[0].id == $root.currentGame.winningCard, 'active-background': $root.currentGame.judge == socket.id}" ng-bind-html="combineCards(currentGame.blackCard.raw, card)" ng-click="judgeCard(card[0])"></div>
+				</div>
+			</div> 
+
+			<div class="played-cards" ng-if="$root.currentGame.blackCards.length > 0">
+				<div class="card-container" ng-repeat="card in $root.currentGame.blackCards">
+					<div class="card black-card" ng-class="{'active-background': $root.currentGame.judge == socket.id}" ng-bind-html="renderHtml(card.text)" ng-click="setBlackCard(card)"></div>
+				</div>
+			</div>
+
+			<div class="played-cards" style="pointer-events: none;" ng-if="$root.currentGame.judge == socket.id">
+				<p class="czar accent-color" ng-if="$root.currentGame.blackCards.length == 0">You are the Card Czar.</p>
+				<p class="czar accent-color" ng-if="$root.currentGame.blackCards.length != 0">Select the next black card to be played.</p>
+			</div>
+		</div>
+
+		<div class="bottom-container" style="">
+			<div class="player-container">
+				<div class="player" ng-repeat="player in $root.currentGame.playerInfo track by $index" ng-class="{'accent-background': player.id == $root.currentGame.roundWinner}">
+					<p class="player-name">{{ player.name }}</p>
+					<p class="player-score">{{ player.score }} Point<span ng-if="player.score > 1 || player.score <= 0">s</span></p>
+					
+					<p class="player-status" ng-switch="player.status">
+						<span ng-switch-when="1">Host</span>
+						<span ng-switch-when="3">Czar</span>
+						<span ng-switch-when="4">Selecting</span>
+						<span ng-switch-when="5">Playing</span>
+						<span ng-switch-when="6">Winner</span>
+					</p>
+				</div>
+			</div>
+			<div class="chat-container" style="">
+				<div class="messages" id="messages-container"></div>
+				<div class="messages-input">
+					<input type="text" placeholder="type a message">
+					<div class="send-message"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card-holder" ng-if="$root.currentGame.gameState == 4 || $root.currentGame.gameState == 2" ng-disabled="$root.currentGame.judge == socket.id || $root.currentGame.blackCard.pick == 0 || $root.currentGame.gameState != 4">
+			<div class="card white-card active-background" ng-repeat="card in $root.currentGame.hand" ng-click="playCard(card)">
+				<span ng-if="!$root.currentGame.nextRoundBlind">{{ card.text }}</span>
+				<span ng-if="$root.currentGame.nextRoundBlind">(blind pick round)</span>
+			</div>
+		</div>
+	</div>
+</div>

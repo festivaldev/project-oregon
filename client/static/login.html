@@ -1,0 +1,18 @@
+<div class="page fullscreen page-navbar page-active" data-page="login">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="navbar-title">Project Oregon</div>
+		</div>
+	</div>
+	<div class="page-content">
+		<p class="h1">Welcome to Project Oregon!</p>
+		<p>Project Oregon is a clone of a clone of a popular card game called Cards Against Humanity.<br>
+			This version is an early prototype, so not everything is working as expected.</p>
+		<p>There are still many features missing, but it's enough to be actually playable.</p>
+		<input type="text" id="username" autocomplete="off" placeholder="Enter a username" ng-disabled="waitingForConnection" ng-keydown="inputKeydown($event)">
+		<button ng-click="connect()" ng-disabled="waitingForConnection">Join</button>
+
+		<p ng-if="waitingForConnection">Connecting...</p>
+		<p ng-if="connectionTimeout">The connection timed out.</p>
+	</div>
+</div>
